@@ -1,10 +1,11 @@
 package main
 
 import (
-        "github.com/aleitner/datingsim/game"
+	"fmt"
 
-        "github.com/hajimehoshi/ebiten"
-        "github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/aleitner/datingsim/datingsim"
+
+	"github.com/hajimehoshi/ebiten"
 )
 
 var (
@@ -12,17 +13,26 @@ var (
 )
 
 func update(screen *ebiten.Image) error {
-        err := game.Update()
-        game.Draw()
-        return nil
+	err := game.Update()
+	if err != nil {
+		return err
+	}
+
+	err = game.Draw(screen)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
-        title := "Super Date Night Ultra Sunshine Romance 2018!"
-        game, err := datingsim.NewGame()
-        if err != nil {
-          return err
-        }
+	title := "Super Date Night Ultra Sunshine Romance 2018!"
+	game, err := datingsim.NewGame()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(game)
 
-        ebiten.Run(update, game.ScreenWidth, game.ScreenHeight, 2, title)
+	ebiten.Run(update, datingsim.ScreenHeight, datingsim.ScreenWidth, 2, title)
 }

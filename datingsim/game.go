@@ -1,7 +1,8 @@
 package datingsim
 
 import (
-        "github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 const (
@@ -22,7 +23,7 @@ func (g *Game) Update() error {
 	return nil
 }
 
-func (g* Game) Draw(screen *ebiten.Image) error {
-  ebitenutil.DebugPrint(screen, "Hello world!")
-  return nil
+func (g *Game) Draw(screen *ebiten.Image) error {
+	ebitenutil.DebugPrint(screen, "Hello world!")
+	return nil
 }
