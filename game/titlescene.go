@@ -1,6 +1,7 @@
 package game
 
 import (
+	"image/color"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
@@ -16,6 +17,6 @@ func (s *TitleScene) Update(state *GameState) error {
 }
 
 func (s *TitleScene) Draw(r *ebiten.Image) {
-	drawText(r, ScreenWidth/2-40, ScreenHeight/4, "Super Date Night Ultra Sunshine Romance 2018!")
-	drawText(r, ScreenWidth/2+15, ScreenHeight/2, "PRESS SPACE TO START")
+	drawText(r, ScreenWidth/2-40, ScreenHeight/4, "Super Date Night Ultra Sunshine Romance 2018!", color.White)
+	drawText(r, ScreenWidth/2+15, ScreenHeight/2, "PRESS SPACE TO START", color.White)
 }

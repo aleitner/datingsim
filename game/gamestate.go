@@ -4,13 +4,14 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
-const (
-	ScreenWidth  = 420
-	ScreenHeight = 600
+var (
+	ScreenWidth  = 360
+	ScreenHeight = 480
 )
 
 type GameState struct {
 	sceneManager *SceneManager
+	settings []Setting
 }
 
 // Update updates the current game state.
