@@ -20,6 +20,7 @@ func (state *GameState) Update() error {
 		state.sceneManager.GoTo(&TitleScene{})
 	}
 
+	state.sceneManager.current.Update(state)
 	return nil
 }
 
