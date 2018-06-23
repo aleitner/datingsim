@@ -6,29 +6,12 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-var settings []*Setting
-
-type Setting struct {
-	text string
-	selected int
-	options []string
-}
-
 type SettingsScene struct{
 	selector int
 }
 
-func loadSettings(state *GameState) error {
-	settings = append(settings, &Setting{text: "FullScreen", options: []string{"on", "off"}})
-	settings = append(settings, &Setting{text: "Resolution", options: []string{"320*480"}})
-
-	return nil
-}
-
 func (s *SettingsScene) Update(state *GameState) error {
-	if settings == nil {
-		loadSettings(state)
-	}
+	settings := state.settings
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
 		s.selector -= 1
@@ -47,9 +30,10 @@ func (s *SettingsScene) Update(state *GameState) error {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
-		settings[s.selector].selected += 1
-		if settings[s.selector].selected >= len(settings[s.selector].options) {
-			settings[s.selector].selected = 0
+		setting := settings[s.selector]
+		setting.selected += 1
+		if setting.selected >= len(setting.options) {
+			setting.selected = 0
 		}
 	}
 
@@ -61,22 +45,18 @@ func (s *SettingsScene) Update(state *GameState) error {
 	return nil
 }
 
-func (s *SettingsScene) Draw(r *ebiten.Image) {
-	drawbackground(r)
-	drawText(r, ScreenWidth/2 + 40, ScreenHeight/10, "Settings", color.Black)
+func (s *SettingsScene) Draw(state *GameState, screen *ebiten.Image) {
+	drawbackground(screen)
+	drawText(screen, ScreenWidth/2 + 40, ScreenHeight/10, "Settings", color.Black)
 
-	if settings == nil {
-		return
-	}
-
-	for i, v := range settings {
+	for i, v := range state.settings {
 		clr := color.Black
 
 		if s.selector == i {
 			clr = color.White
 		}
-		drawText(r, ScreenWidth/3, ScreenHeight/6 + i * 20, v.text, color.Black)
-		drawText(r, ScreenWidth - ScreenWidth/5, ScreenHeight/6 + i * 20, v.options[v.selected], clr)
+		drawText(screen, ScreenWidth/3, ScreenHeight/6 + i * 20, v.text, color.Black)
+		drawText(screen, ScreenWidth - ScreenWidth/5, ScreenHeight/6 + i * 20, v.options[v.selected], clr)
 	}
 
 }

@@ -32,5 +32,5 @@ func main() {
 
 	fmt.Printf("%+v\n", gamestate)
 
-	ebiten.Run(update, game.ScreenHeight, game.ScreenWidth, 2, title)
+	ebiten.Run(update, game.ScreenHeight, game.ScreenWidth, 1, title)
 }

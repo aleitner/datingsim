@@ -6,7 +6,7 @@ import (
 
 type Scene interface {
 	Update(*GameState) error // Update the scene by game state
-	Draw(*ebiten.Image)      // Draw onto the Screen that gets passed in
+	Draw(*GameState, *ebiten.Image)      // Draw onto the Screen that gets passed in
 }
 
 type SceneManager struct {
@@ -23,12 +23,12 @@ func (s *SceneManager) Update(state *GameState) error {
 	return s.current.Update(state)
 }
 
-func (s *SceneManager) Draw(r *ebiten.Image) {
+func (s *SceneManager) Draw(state *GameState, screen *ebiten.Image) {
 	if s.current == nil {
 		return
 	}
 
-	s.current.Draw(r)
+	s.current.Draw(state, screen)
 }
 
 func (s *SceneManager) GoTo(scene Scene) {
