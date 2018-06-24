@@ -20,7 +20,7 @@ func drawText(r *ebiten.Image, x, y int, str string, clr color.Color) {
 // InteractiveElement -- These are all elements that can be interacted with on screen
 type InteractiveElement interface {
 	Text() string
-	Action(*GameState)
+	Update(*GameState)
 }
 
 // BackButton -- Button for returning to previous screen
@@ -33,7 +33,7 @@ func (s *BackButton) Text() string {
 	return s.text
 }
 
-func (b *BackButton) Action(state *GameState) {
+func (b *BackButton) Update(state *GameState) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		state.sceneManager.GoTo(b.previous)
 	}
@@ -54,7 +54,7 @@ func (s *Setting) Text() string {
 	return s.text
 }
 
-func (s *Setting) Action(state *GameState) {
+func (s *Setting) Update(state *GameState) {
 
 	// Move through options when right key is pressed
 	if inpututil.IsKeyJustPressed(ebiten.KeyRight) || inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
