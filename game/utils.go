@@ -20,6 +20,14 @@ func drawText(r *ebiten.Image, x, y int, str string, clr color.Color) {
 	text.Draw(r, str, truetype.NewFace(font, nil), x, y, clr)
 }
 
+func drawbackground(screen *ebiten.Image, width, height int) {
+	i, _ := ebiten.NewImage(width, height, ebiten.FilterDefault)
+	i.Fill(&color.RGBA{255, 0, 0, 255})
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(0, 0)
+	screen.DrawImage(i, op)
+}
+
 func copySettings(src []*Setting) (dst []*Setting) {
 	var mod bytes.Buffer
 	enc := gob.NewEncoder(&mod)
@@ -41,6 +49,7 @@ func copySettings(src []*Setting) (dst []*Setting) {
 type InteractiveElement interface {
 	Text() string
 	Update(*GameState)
+	Draw(*ebiten.Image, int, int, bool)
 }
 
 // BackButton -- Button for returning to previous screen
@@ -57,6 +66,16 @@ func (b *BackButton) Update(state *GameState) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		state.sceneManager.GoTo(b.previous)
 	}
+}
+
+func (b *BackButton) Draw(screen *ebiten.Image, x, y int, isSelected bool) {
+	clr := color.Black
+
+	if isSelected {
+		clr = color.White
+	}
+
+	drawText(screen, x, y, b.Content, clr)
 }
 
 // Setting -- Element for adjusting a setting
@@ -91,4 +110,15 @@ func (s *Setting) Update(state *GameState) {
 			s.Selected = len(s.Options) - 1
 		}
 	}
+}
+
+func (s *Setting) Draw(screen *ebiten.Image, x, y int, isSelected bool) {
+	clr := color.Black
+
+	if isSelected {
+		clr = color.White
+	}
+
+	drawText(screen, x, y, s.Content, color.Black)
+	drawText(screen, x + 100, y, s.SelectedOption(), clr)
 }

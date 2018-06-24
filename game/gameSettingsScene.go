@@ -58,32 +58,20 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 	width, height := state.Resolution()
 
 	drawbackground(screen, width, height)
-	drawText(screen, width/2+40, height/10, "Settings", color.Black)
+	drawText(screen, width/10, height/10, "Settings", color.Black)
 
 	elementPos := 0
 
 	// Draw Settings
 	for _, setting := range s.tempSettings {
-		clr := color.Black
-
-		if s.currentElement == elementPos {
-			clr = color.White
-		}
-		drawText(screen, width/3, height/6+elementPos*20, setting.Text(), color.Black)
-		drawText(screen, width-height/5, height/6+elementPos*20, setting.SelectedOption(), clr)
+		setting.Draw(screen, width*2/5, height/6+elementPos*20, s.currentElement == elementPos)
 
 		elementPos += 1
 	}
 
 	// Draw other elements element
 	for _, element := range s.elements {
-		clr := color.Black
-
-		if s.currentElement == elementPos {
-			clr = color.White
-		}
-
-		drawText(screen, width/3, height/6+elementPos*20, element.Text(), clr)
+		element.Draw(screen, width*2/5, height/6+elementPos*20, s.currentElement == elementPos)
 
 		elementPos += 1
 	}
@@ -127,10 +115,12 @@ func (s *SaveSettings) Update(state *GameState) {
 	}
 }
 
-func drawbackground(screen *ebiten.Image, width, height int) {
-	i, _ := ebiten.NewImage(width, height, ebiten.FilterDefault)
-	i.Fill(&color.RGBA{255, 0, 0, 255})
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(0, 0)
-	screen.DrawImage(i, op)
+func (s *SaveSettings) Draw(screen *ebiten.Image, x, y int, isSelected bool) {
+	clr := color.Black
+
+	if isSelected {
+		clr = color.White
+	}
+
+	drawText(screen, x, y, s.Content, clr)
 }
