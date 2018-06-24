@@ -2,6 +2,7 @@ package game
 
 import (
 	"image/color"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
@@ -18,7 +19,7 @@ func (s *GameSettingsScene) elementCount() int {
 
 func (s *GameSettingsScene) Update(state *GameState) error {
 	if s.tempSettings == nil {
-		s.tempSettings = state.settings
+		s.tempSettings = copySettings(state.Settings)
 	}
 
 	if len(s.elements) <= 0 {
@@ -54,8 +55,10 @@ func (s *GameSettingsScene) Update(state *GameState) error {
 }
 
 func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
-	drawbackground(screen)
-	drawText(screen, ScreenWidth/2 + 40, ScreenHeight/10, "Settings", color.Black)
+	width, height := state.Resolution()
+
+	drawbackground(screen, width, height)
+	drawText(screen, width/2 + 40, height/10, "Settings", color.Black)
 
 	elementPos := 0
 
@@ -66,8 +69,8 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 		if s.currentElement == elementPos {
 			clr = color.White
 		}
-		drawText(screen, ScreenWidth/3, ScreenHeight/6 + elementPos * 20, setting.Text(), color.Black)
-		drawText(screen, ScreenWidth - ScreenWidth/5, ScreenHeight/6 + elementPos * 20, setting.SelectedOption(), clr)
+		drawText(screen, width/3, height/6 + elementPos * 20, setting.Text(), color.Black)
+		drawText(screen, width - height/5, height/6 + elementPos * 20, setting.SelectedOption(), clr)
 
 		elementPos += 1
 	}
@@ -80,7 +83,7 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 			clr = color.White
 		}
 
-		drawText(screen, ScreenWidth/3, ScreenHeight/6 + elementPos * 20, element.Text(), clr)
+		drawText(screen, width/3, height/6 + elementPos * 20, element.Text(), clr)
 
 		elementPos += 1
 	}
@@ -90,19 +93,19 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 // Settings are also clickable but they have an extra method so we'll treat them differently
 func (s *GameSettingsScene) initializeElements(state *GameState) {
 	// Load Interactive Save Button
-	s.elements = append(s.elements, &SaveSettings{text: "Save", tempSettings: s.tempSettings})
+	s.elements = append(s.elements, &SaveSettings{Content: "Save", tempSettings: s.tempSettings})
 	// Load Interactive Back Button
-	s.elements = append(s.elements, &BackButton{text: "Back", previous: &TitleScene{}})
+	s.elements = append(s.elements, &BackButton{Content: "Back", previous: &TitleScene{}})
 }
 
 // SaveSetting -- Button with pointer to temp settings
 type SaveSettings struct {
-	text string
+	Content string
 	tempSettings []*Setting
 }
 
 func (s *SaveSettings) Text() string {
-	return s.text
+	return s.Content
 }
 
 // Save the temp Settings
@@ -110,15 +113,22 @@ func (s *SaveSettings) Update(state *GameState) {
 
 	// Save the Settings
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		state.settings = s.tempSettings
+		state.Settings = copySettings(s.tempSettings)
+
+		if len(state.Settings) <= 0 {
+			return
+		}
 
 		// Reload based on the new Settings
-		ebiten.SetFullscreen(state.settings[0].selected != 0)
+		ebiten.SetFullscreen(state.Settings[0].Selected != 0)
+		ebiten.SetScreenSize(state.Resolution())
+
+		// Write settings to fs
 	}
 }
 
-func drawbackground(screen *ebiten.Image) {
-	i, _ := ebiten.NewImage(ScreenHeight, ScreenWidth, ebiten.FilterDefault)
+func drawbackground(screen *ebiten.Image, width, height int) {
+	i, _ := ebiten.NewImage(width, height, ebiten.FilterDefault)
 	i.Fill(&color.RGBA{255, 0, 0, 255})
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(0, 0)

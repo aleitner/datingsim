@@ -1,17 +1,15 @@
 package game
 
 import (
-	"github.com/hajimehoshi/ebiten"
-)
+	"strings"
+	"strconv"
 
-var (
-	ScreenWidth  = 360
-	ScreenHeight = 480
+	"github.com/hajimehoshi/ebiten"
 )
 
 type GameState struct {
 	sceneManager *SceneManager
-	settings []*Setting
+	Settings []*Setting
 }
 
 // Update updates the current game state.
@@ -21,9 +19,8 @@ func (state *GameState) Update() error {
 		state.sceneManager.GoTo(&TitleScene{})
 	}
 
-	if state.settings == nil {
-		state.LoadDefaultSettings()
-		ebiten.SetFullscreen(state.settings[0].selected != 0)
+	if state.Settings == nil {
+		ebiten.SetFullscreen(state.Settings[0].Selected != 0)
 	}
 
 	state.sceneManager.current.Update(state)
@@ -40,6 +37,26 @@ func (state *GameState) Draw(screen *ebiten.Image) error {
 }
 
 func (state *GameState) LoadDefaultSettings() {
-	state.settings = append(state.settings, &Setting{text: "FullScreen", options: []string{"off", "on"}})
-	state.settings = append(state.settings, &Setting{text: "Resolution", options: []string{"320*480"}})
+	state.Settings = append(state.Settings, &Setting{Content: "FullScreen", Options: []string{"off", "on"}})
+	state.Settings = append(state.Settings, &Setting{Content: "Resolution", Options: []string{"480*360", "1024*768", "1366*768", "1440*900", "1600*900", "1920*1080"}})
+}
+
+// Return if the game is fullscreened or not
+func (state *GameState) IsFullScreen() bool {
+	return state.Settings[0].Selected != 0
+}
+
+// Return Width, height of the game
+func (state *GameState) Resolution() (width, height int) {
+	if state.Settings == nil || len(state.Settings) < 2 {
+		return 480, 360
+	}
+
+	setting := state.Settings[1]
+
+	slice := strings.Split(setting.Options[setting.Selected], "*")
+
+	width, _ = strconv.Atoi(slice[0])
+	height, _ = strconv.Atoi(slice[1])
+	return width, height
 }

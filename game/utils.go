@@ -1,7 +1,10 @@
 package game
 
 import (
+	"bytes"
+	"encoding/gob"
 	"image/color"
+	"log"
 
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font/gofont/goregular"
@@ -17,6 +20,24 @@ func drawText(r *ebiten.Image, x, y int, str string, clr color.Color) {
 	text.Draw(r, str, truetype.NewFace(font, nil), x, y, clr)
 }
 
+func copySettings(src []*Setting) (dst []*Setting) {
+	var mod bytes.Buffer
+	enc := gob.NewEncoder(&mod)
+	dec := gob.NewDecoder(&mod)
+
+
+	err := enc.Encode(src)
+	if err != nil {
+			log.Fatal("encode error:", err)
+	}
+
+	err = dec.Decode(&dst)
+	if err != nil {
+			log.Fatal("decode error:", err)
+	}
+	return dst
+}
+
 // InteractiveElement -- These are all elements that can be interacted with on screen
 type InteractiveElement interface {
 	Text() string
@@ -25,12 +46,12 @@ type InteractiveElement interface {
 
 // BackButton -- Button for returning to previous screen
 type BackButton struct {
-	text string
+	Content string
 	previous Scene
 }
 
 func (s *BackButton) Text() string {
-	return s.text
+	return s.Content
 }
 
 func (b *BackButton) Update(state *GameState) {
@@ -41,34 +62,34 @@ func (b *BackButton) Update(state *GameState) {
 
 // Setting -- Element for adjusting a setting
 type Setting struct {
-	text string
-	selected int
-	options []string
+	Content string
+	Selected int
+	Options []string
 }
 
 func (s *Setting) SelectedOption() string {
-	return s.options[s.selected]
+	return s.Options[s.Selected]
 }
 
 func (s *Setting) Text() string {
-	return s.text
+	return s.Content
 }
 
 func (s *Setting) Update(state *GameState) {
 
 	// Move through options when right key is pressed
 	if inpututil.IsKeyJustPressed(ebiten.KeyRight) || inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		s.selected += 1
-		if s.selected >= len(s.options) {
-			s.selected = 0
+		s.Selected += 1
+		if s.Selected >= len(s.Options) {
+			s.Selected = 0
 		}
 	}
 
 	// Move through options when left key is pressed
 	if inpututil.IsKeyJustPressed(ebiten.KeyLeft) {
-		s.selected -= 1
-		if s.selected < 0 {
-			s.selected = len(s.options) - 1
+		s.Selected -= 1
+		if s.Selected < 0 {
+			s.Selected = len(s.Options) - 1
 		}
 	}
 }
