@@ -10,7 +10,7 @@ type TitleScene struct{}
 
 func (s *TitleScene) Update(state *GameState) error {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		state.sceneManager.GoTo(&SettingsScene{})
+		state.sceneManager.GoTo(&GameSettingsScene{})
 		return nil
 	}
 	return nil

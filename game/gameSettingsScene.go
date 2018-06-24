@@ -6,17 +6,17 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-type SettingsScene struct{
+type GameSettingsScene struct{
 	currentElement int
 	elements []InteractiveElement
 	tempSettings []*Setting
 }
 
-func (s *SettingsScene) elementCount() int {
+func (s *GameSettingsScene) elementCount() int {
 	return len(s.elements) + len(s.tempSettings)
 }
 
-func (s *SettingsScene) Update(state *GameState) error {
+func (s *GameSettingsScene) Update(state *GameState) error {
 	if s.tempSettings == nil {
 		s.tempSettings = state.settings
 	}
@@ -53,7 +53,7 @@ func (s *SettingsScene) Update(state *GameState) error {
 	return nil
 }
 
-func (s *SettingsScene) Draw(state *GameState, screen *ebiten.Image) {
+func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 	drawbackground(screen)
 	drawText(screen, ScreenWidth/2 + 40, ScreenHeight/10, "Settings", color.Black)
 
@@ -88,7 +88,7 @@ func (s *SettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 
 // Load All Interactive things into the elements array
 // Settings are also clickable but they have an extra method so we'll treat them differently
-func (s *SettingsScene) initializeElements(state *GameState) {
+func (s *GameSettingsScene) initializeElements(state *GameState) {
 	// Load Interactive Save Button
 	s.elements = append(s.elements, &SaveSettings{text: "Save", tempSettings: s.tempSettings})
 	// Load Interactive Back Button
