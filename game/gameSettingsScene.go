@@ -7,10 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-type GameSettingsScene struct{
+type GameSettingsScene struct {
 	currentElement int
-	elements []InteractiveElement
-	tempSettings []*Setting
+	elements       []InteractiveElement
+	tempSettings   []*Setting
 }
 
 func (s *GameSettingsScene) elementCount() int {
@@ -46,7 +46,7 @@ func (s *GameSettingsScene) Update(state *GameState) error {
 	// Settings and Elements are separated so we have to determine
 	// if the settings are highlighted or if the other elements are highlighted
 	if s.currentElement >= len(s.tempSettings) {
-		s.elements[s.currentElement - len(s.tempSettings)].Update(state)
+		s.elements[s.currentElement-len(s.tempSettings)].Update(state)
 	} else {
 		s.tempSettings[s.currentElement].Update(state)
 	}
@@ -58,7 +58,7 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 	width, height := state.Resolution()
 
 	drawbackground(screen, width, height)
-	drawText(screen, width/2 + 40, height/10, "Settings", color.Black)
+	drawText(screen, width/2+40, height/10, "Settings", color.Black)
 
 	elementPos := 0
 
@@ -69,8 +69,8 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 		if s.currentElement == elementPos {
 			clr = color.White
 		}
-		drawText(screen, width/3, height/6 + elementPos * 20, setting.Text(), color.Black)
-		drawText(screen, width - height/5, height/6 + elementPos * 20, setting.SelectedOption(), clr)
+		drawText(screen, width/3, height/6+elementPos*20, setting.Text(), color.Black)
+		drawText(screen, width-height/5, height/6+elementPos*20, setting.SelectedOption(), clr)
 
 		elementPos += 1
 	}
@@ -83,7 +83,7 @@ func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
 			clr = color.White
 		}
 
-		drawText(screen, width/3, height/6 + elementPos * 20, element.Text(), clr)
+		drawText(screen, width/3, height/6+elementPos*20, element.Text(), clr)
 
 		elementPos += 1
 	}
@@ -100,7 +100,7 @@ func (s *GameSettingsScene) initializeElements(state *GameState) {
 
 // SaveSetting -- Button with pointer to temp settings
 type SaveSettings struct {
-	Content string
+	Content      string
 	tempSettings []*Setting
 }
 

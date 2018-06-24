@@ -1,9 +1,9 @@
 package game
 
 import (
-	"image/color"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"image/color"
 )
 
 type TitleScene struct{}

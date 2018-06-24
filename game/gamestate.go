@@ -1,15 +1,15 @@
 package game
 
 import (
-	"strings"
 	"strconv"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten"
 )
 
 type GameState struct {
 	sceneManager *SceneManager
-	Settings []*Setting
+	Settings     []*Setting
 }
 
 // Update updates the current game state.

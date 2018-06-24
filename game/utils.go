@@ -10,8 +10,8 @@ import (
 	"golang.org/x/image/font/gofont/goregular"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/text"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/hajimehoshi/ebiten/text"
 )
 
 func drawText(r *ebiten.Image, x, y int, str string, clr color.Color) {
@@ -25,15 +25,14 @@ func copySettings(src []*Setting) (dst []*Setting) {
 	enc := gob.NewEncoder(&mod)
 	dec := gob.NewDecoder(&mod)
 
-
 	err := enc.Encode(src)
 	if err != nil {
-			log.Fatal("encode error:", err)
+		log.Fatal("encode error:", err)
 	}
 
 	err = dec.Decode(&dst)
 	if err != nil {
-			log.Fatal("decode error:", err)
+		log.Fatal("decode error:", err)
 	}
 	return dst
 }
@@ -46,7 +45,7 @@ type InteractiveElement interface {
 
 // BackButton -- Button for returning to previous screen
 type BackButton struct {
-	Content string
+	Content  string
 	previous Scene
 }
 
@@ -62,9 +61,9 @@ func (b *BackButton) Update(state *GameState) {
 
 // Setting -- Element for adjusting a setting
 type Setting struct {
-	Content string
+	Content  string
 	Selected int
-	Options []string
+	Options  []string
 }
 
 func (s *Setting) SelectedOption() string {

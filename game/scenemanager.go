@@ -5,8 +5,8 @@ import (
 )
 
 type Scene interface {
-	Update(*GameState) error // Update the scene by game state
-	Draw(*GameState, *ebiten.Image)      // Draw onto the Screen that gets passed in
+	Update(*GameState) error        // Update the scene by game state
+	Draw(*GameState, *ebiten.Image) // Draw onto the Screen that gets passed in
 }
 
 type SceneManager struct {
