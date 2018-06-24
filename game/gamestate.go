@@ -9,12 +9,6 @@ var (
 	ScreenHeight = 480
 )
 
-type Setting struct {
-	text string
-	selected int
-	options []string
-}
-
 type GameState struct {
 	sceneManager *SceneManager
 	settings []*Setting
@@ -29,6 +23,7 @@ func (state *GameState) Update() error {
 
 	if state.settings == nil {
 		state.LoadDefaultSettings()
+		ebiten.SetFullscreen(state.settings[0].selected != 0)
 	}
 
 	state.sceneManager.current.Update(state)
@@ -45,6 +40,6 @@ func (state *GameState) Draw(screen *ebiten.Image) error {
 }
 
 func (state *GameState) LoadDefaultSettings() {
-	state.settings = append(state.settings, &Setting{text: "FullScreen", options: []string{"on", "off"}})
+	state.settings = append(state.settings, &Setting{text: "FullScreen", options: []string{"off", "on"}})
 	state.settings = append(state.settings, &Setting{text: "Resolution", options: []string{"320*480"}})
 }
