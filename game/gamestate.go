@@ -18,7 +18,7 @@ func (state *GameState) Update() error {
 	// Initialize SceneManager and go to Title Screen
 	// This happens when starting a new game
 	if state.sceneManager == nil {
-		state.sceneManager = &SceneManager{}
+		state.sceneManager = NewSceneManager()
 		state.sceneManager.GoTo(&TitleScene{})
 	}
 
@@ -26,7 +26,7 @@ func (state *GameState) Update() error {
 	state.sceneManager.Update(state)
 	return nil
 }
-	
+
 // Draw -- Draw the current Scene
 func (state *GameState) Draw(screen *ebiten.Image) error {
 	if state.sceneManager == nil {

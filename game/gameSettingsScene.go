@@ -111,7 +111,7 @@ func (s *SaveSettings) Update(state *GameState) {
 		ebiten.SetFullscreen(state.Settings[0].Selected != 0)
 		ebiten.SetScreenSize(state.Resolution())
 
-		// Write settings to fs
+		// TODO: Write settings to fs
 	}
 }
 

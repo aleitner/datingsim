@@ -12,6 +12,11 @@ type Scene interface {
 type SceneManager struct {
 	current  Scene
 	previous Scene
+	transitioning bool
+}
+
+func NewSceneManager() *SceneManager {
+	return &SceneManager{}
 }
 
 func (s *SceneManager) Update(state *GameState) error {
@@ -28,11 +33,21 @@ func (s *SceneManager) Draw(state *GameState, screen *ebiten.Image) {
 		return
 	}
 
-	s.current.Draw(state, screen)
+	// Draw the previous screen in case we change screens in the middle of update
+	// If there is a change in the middle of update then the new screen's update will not have run
+	// and a bunch of stuff won't have been initialized
+	if s.transitioning == true {
+		s.previous.Draw(state, screen)
+		s.transitioning = false
+	} else {
+		s.current.Draw(state, screen)
+	}
 }
 
 func (s *SceneManager) GoTo(scene Scene) {
-	if s.current == nil {
+	// If this isn't the first scene make sure we set the previous
+	if s.current != nil {
+		s.transitioning = true
 		s.previous = s.current
 	}
 
