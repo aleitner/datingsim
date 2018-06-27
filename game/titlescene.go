@@ -5,6 +5,8 @@ import (
 	"os"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/nfnt/resize"
+	"image"
 	"image/png"
 	"image/color"
 )
@@ -33,14 +35,14 @@ func (s *TitleScene) Draw(state *GameState, screen *ebiten.Image) {
 	width, height := state.Resolution()
 
 	if s.background != nil {
-		s.background.Draw(screen)
+		s.background.Draw(screen, width, height)
 	}
 
 	drawText(screen, width/2+15, height/2, "PRESS SPACE TO START", color.White)
 }
 
 type Background struct {
-	img *ebiten.Image
+	img image.Image
 }
 
 func NewBackground(path string) (*Background, error) {
@@ -56,18 +58,30 @@ func NewBackground(path string) (*Background, error) {
 		return nil, err
 	}
 
-	img2, err := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Background{img2}, nil
+	return &Background{img}, nil
 }
 
-func (b *Background) Draw(screen *ebiten.Image) {
+func (b *Background) Draw(screen *ebiten.Image, width, height int) {
 	if b.img == nil {
 		return
 	}
+
+	// Resize the image to match the resolution
+	resizedIMG := resize.Resize(uint(width), 0, b.img, resize.Lanczos3)
+
+	// Convert the imageto ebiten format
+	img, err := ebiten.NewImageFromImage(resizedIMG, ebiten.FilterDefault)
+	if err != nil {
+		return
+	}
+
+	_, ih := img.Size()
 	op := &ebiten.DrawImageOptions{}
-	screen.DrawImage(b.img, op)
+
+	// translate the image to the proper y coordinate if the image is shorter than the height
+	if heightDiff := height - ih; heightDiff > 0 {
+			op.GeoM.Translate(0, float64(heightDiff/2))
+	}
+
+	screen.DrawImage(img, op)
 }
