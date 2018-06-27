@@ -1,17 +1,18 @@
 package game
 
 import (
+	"image"
+	"image/color"
+	"image/png"
 	"log"
 	"os"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/nfnt/resize"
-	"image"
-	"image/png"
-	"image/color"
 )
 
-type TitleScene struct{
+type TitleScene struct {
 	background *Background
 }
 
@@ -80,7 +81,7 @@ func (b *Background) Draw(screen *ebiten.Image, width, height int) {
 
 	// translate the image to the proper y coordinate if the image is shorter than the height
 	if heightDiff := height - ih; heightDiff > 0 {
-			op.GeoM.Translate(0, float64(heightDiff/2))
+		op.GeoM.Translate(0, float64(heightDiff/2))
 	}
 
 	screen.DrawImage(img, op)

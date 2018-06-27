@@ -34,7 +34,7 @@ func main() {
 	fmt.Println(gamestate.IsFullScreen())
 	width, height := gamestate.Resolution()
 	fmt.Println(width, height)
-	// Load Settings into gamestate.Settings if they already exist
+	// TODO: Load Settings into gamestate.Settings if they already exist
 
 	fmt.Printf("%+v\n", gamestate)
 

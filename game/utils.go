@@ -120,5 +120,5 @@ func (s *Setting) Draw(screen *ebiten.Image, x, y int, isSelected bool) {
 	}
 
 	drawText(screen, x, y, s.Content, color.Black)
-	drawText(screen, x + 100, y, s.SelectedOption(), clr)
+	drawText(screen, x+100, y, s.SelectedOption(), clr)
 }

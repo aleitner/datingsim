@@ -10,8 +10,8 @@ type Scene interface {
 }
 
 type SceneManager struct {
-	current  Scene
-	previous Scene
+	current       Scene
+	previous      Scene
 	transitioning bool
 }
 
