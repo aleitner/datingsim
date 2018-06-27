@@ -31,9 +31,8 @@ func main() {
 	gamestate = &game.GameState{}
 	gamestate.LoadDefaultSettings()
 	ebiten.SetFullscreen(gamestate.IsFullScreen())
-	fmt.Println(gamestate.IsFullScreen())
+
 	width, height := gamestate.Resolution()
-	fmt.Println(width, height)
 	// TODO: Load Settings into gamestate.Settings if they already exist
 
 	fmt.Printf("%+v\n", gamestate)

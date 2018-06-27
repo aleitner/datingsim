@@ -83,7 +83,7 @@ func (s *GameSettingsScene) initializeElements(state *GameState) {
 	// Load Interactive Save Button
 	s.elements = append(s.elements, &SaveSettings{Content: "Save", tempSettings: s.tempSettings})
 	// Load Interactive Back Button
-	s.elements = append(s.elements, &BackButton{Content: "Back", previous: &TitleScene{}})
+	s.elements = append(s.elements, &BackButton{Content: "Back", previous: state.sceneManager.previous})
 }
 
 // SaveSetting -- Button with pointer to temp settings
