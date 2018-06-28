@@ -8,24 +8,24 @@ import (
 )
 
 type GameSettingsScene struct {
-	initialized bool
-	currentElement int
+	initialized     bool
+	currentElement  int
 	previousElement int
-	tempSettings   []*Setting
-	backButton		 *BackButton
-	saveButton		 *SaveSettings
+	tempSettings    []*Setting
+	backButton      *BackButton
+	saveButton      *SaveSettings
 }
 
 // Initialize the GameSettingsScene values
 func (s *GameSettingsScene) initialize(state *GameState) {
 	s.backButton = NewBackButton(
 		state.sceneManager.previous,
-		func() (int, int) {width, height := Resolution(); return width*9/10,height*9/10})
+		func() (int, int) { width, height := Resolution(); return width * 9 / 10, height * 9 / 10 })
 
 	s.currentElement = 0
 	s.previousElement = 1 // Set this to 1 so that there is no conflict with currentElement
 	s.tempSettings = createTempSettings(GameSettings)
-	s.saveButton = NewSaveSettingsButton(func() (int, int) {width, height := Resolution(); return width*1/10,height*9/10})
+	s.saveButton = NewSaveSettingsButton(func() (int, int) { width, height := Resolution(); return width * 1 / 10, height * 9 / 10 })
 
 	s.initialized = true
 }
@@ -105,9 +105,9 @@ func (s *GameSettingsScene) highlightOption() {
 	}
 
 	// Highlight of saveButton
-	if s.currentElement == len(s.tempSettings) + 1{
+	if s.currentElement == len(s.tempSettings)+1 {
 		s.saveButton.Highlight(true)
-	} else if s.previousElement == len(s.tempSettings) + 1{
+	} else if s.previousElement == len(s.tempSettings)+1 {
 		s.saveButton.Highlight(false)
 	}
 }
@@ -120,21 +120,21 @@ func createTempSettings(settings []*Setting) (tempSettings []*Setting) {
 		tempSettings = append(
 			tempSettings,
 			&Setting{
-				content: s.content,
+				content:        s.content,
 				selectedOption: s.selectedOption,
-				options: s.options,
-				scalefn: scalefn})
+				options:        s.options,
+				scalefn:        scalefn})
 	}
 
 	return tempSettings
 }
 
-// Settings scale functions need yoffset 
+// Settings scale functions need yoffset
 func initScaleClosure(i int) func() (int, int) {
-yoffset := i
-// closure. function has access to text even after exiting this block
-return func() (int, int) {
-	gw, gh := Resolution()
-	return gw*2/5, gh/6+yoffset*20
-}
+	yoffset := i
+	// closure. function has access to text even after exiting this block
+	return func() (int, int) {
+		gw, gh := Resolution()
+		return gw * 2 / 5, gh/6 + yoffset*20
+	}
 }

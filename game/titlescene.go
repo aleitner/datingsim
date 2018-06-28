@@ -1,8 +1,8 @@
 package game
 
 import (
-	"log"
 	"image/color"
+	"log"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
@@ -20,7 +20,7 @@ func (s *TitleScene) Update(state *GameState) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 	} else {
 		s.background.Update(state)
 	}

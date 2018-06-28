@@ -9,11 +9,11 @@ import (
 
 // Setting -- Element for adjusting a setting
 type Setting struct {
-	content  string
+	content        string
 	selectedOption int
-	options  []string
-	highlighted bool
-	scalefn Scale
+	options        []string
+	highlighted    bool
+	scalefn        Scale
 }
 
 func (s *Setting) SelectedOption() string {

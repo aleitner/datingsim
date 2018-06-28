@@ -2,15 +2,16 @@ package game
 
 import (
 	"image/color"
+
 	"github.com/hajimehoshi/ebiten"
-  "github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
 // SaveSetting -- Button with pointer to temp settings
 type SaveSettings struct {
-	content      string
+	content     string
 	highlighted bool
-  scalefn Scale
+	scalefn     Scale
 }
 
 func NewSaveSettingsButton(scale Scale) *SaveSettings {
@@ -24,15 +25,15 @@ func (s *SaveSettings) Highlight(highlighted bool) {
 // Save the temp Settings
 func (s *SaveSettings) Update(state *GameState, tempSettings []*Setting) {
 
-  if s.highlighted != true {
-    return
-  }
+	if s.highlighted != true {
+		return
+	}
 
 	// Save the Settings
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-    for i, tmp := range tempSettings {
-      GameSettings[i].selectedOption = tmp.selectedOption
-    }
+		for i, tmp := range tempSettings {
+			GameSettings[i].selectedOption = tmp.selectedOption
+		}
 
 		// Reload based on the new Settings
 		ebiten.SetFullscreen(IsFullScreen())
@@ -49,6 +50,6 @@ func (s *SaveSettings) Draw(screen *ebiten.Image) {
 		clr = color.White
 	}
 
-  x, y := s.scalefn()
+	x, y := s.scalefn()
 	drawText(screen, x, y, s.content, clr)
 }

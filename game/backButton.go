@@ -9,14 +9,14 @@ import (
 
 // BackButton -- Button for returning to previous screen
 type BackButton struct {
-	content  string
-	previous Scene
-  highlighted bool
-	scalefn Scale
+	content     string
+	previous    Scene
+	highlighted bool
+	scalefn     Scale
 }
 
 func NewBackButton(previous Scene, scale Scale) *BackButton {
-  return &BackButton{content: "Back", previous: previous, scalefn: scale}
+	return &BackButton{content: "Back", previous: previous, scalefn: scale}
 }
 
 func (b *BackButton) Highlight(highlighted bool) {
@@ -24,9 +24,9 @@ func (b *BackButton) Highlight(highlighted bool) {
 }
 
 func (b *BackButton) Update(state *GameState) {
-  if b.highlighted == false {
-    return
-  }
+	if b.highlighted == false {
+		return
+	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		state.sceneManager.GoTo(b.previous)
