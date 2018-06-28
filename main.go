@@ -29,10 +29,9 @@ func main() {
 
 	title := "Super Date Night Ultra Sunshine Romance 2018!"
 	gamestate = &game.GameState{}
-	gamestate.LoadDefaultSettings()
-	ebiten.SetFullscreen(gamestate.IsFullScreen())
+	ebiten.SetFullscreen(game.IsFullScreen())
 
-	width, height := gamestate.Resolution()
+	width, height := game.Resolution()
 	// TODO: Load Settings into gamestate.Settings if they already exist
 
 	fmt.Printf("%+v\n", gamestate)
