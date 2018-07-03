@@ -5,8 +5,8 @@ import (
 )
 
 type Scene interface {
-	Update(*GameState) error        // Update the scene by game state
-	Draw(*GameState, *ebiten.Image) // Draw onto the Screen that gets passed in
+	Update(*GameState) error // Update the scene by game state
+	Draw(*ebiten.Image)      // Draw onto the Screen that gets passed in
 }
 
 type SceneManager struct {
@@ -37,10 +37,10 @@ func (s *SceneManager) Draw(state *GameState, screen *ebiten.Image) {
 	// If there is a change in the middle of update then the new screen's update will not have run
 	// and a bunch of stuff won't have been initialized
 	if s.transitioning == true {
-		s.previous.Draw(state, screen)
+		s.previous.Draw(screen)
 		s.transitioning = false
 	} else {
-		s.current.Draw(state, screen)
+		s.current.Draw(screen)
 	}
 }
 

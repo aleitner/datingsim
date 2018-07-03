@@ -8,25 +8,40 @@ import (
 )
 
 type GameSettingsScene struct {
-	currentElement int
-	elements       []InteractiveElement
-	tempSettings   []*Setting
+	initialized     bool
+	currentElement  int
+	previousElement int
+	tempSettings    []*Setting
+	backButton      *BackButton
+	saveButton      *SaveSettings
+}
+
+// Initialize the GameSettingsScene values
+func (s *GameSettingsScene) initialize(state *GameState) {
+	s.backButton = NewBackButton(
+		state.sceneManager.previous,
+		func() (int, int) { width, height := Resolution(); return width * 9 / 10, height * 9 / 10 })
+
+	s.currentElement = 0
+	s.previousElement = 1 // Set this to 1 so that there is no conflict with currentElement
+	s.tempSettings = createTempSettings(GameSettings)
+	s.saveButton = NewSaveSettingsButton(func() (int, int) { width, height := Resolution(); return width * 1 / 10, height * 9 / 10 })
+
+	s.initialized = true
 }
 
 func (s *GameSettingsScene) elementCount() int {
-	return len(s.elements) + len(s.tempSettings)
+	// Back Button, Save Button, Settings
+	return 2 + len(s.tempSettings)
 }
 
 func (s *GameSettingsScene) Update(state *GameState) error {
-	if s.tempSettings == nil {
-		s.tempSettings = copySettings(state.Settings)
-	}
-
-	if len(s.elements) <= 0 {
-		s.initializeElements(state)
+	if s.initialized == false {
+		s.initialize(state)
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
+		s.previousElement = s.currentElement
 		s.currentElement -= 1
 		if s.currentElement < 0 {
 			s.currentElement = s.elementCount() - 1
@@ -35,6 +50,7 @@ func (s *GameSettingsScene) Update(state *GameState) error {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDown) {
+		s.previousElement = s.currentElement
 		s.currentElement += 1
 		if s.currentElement >= s.elementCount() {
 			s.currentElement = 0
@@ -42,85 +58,83 @@ func (s *GameSettingsScene) Update(state *GameState) error {
 		return nil
 	}
 
-	// Perform Update for the current Element that is Highlighted
-	// Settings and Elements are separated so we have to determine
-	// if the settings are highlighted or if the other elements are highlighted
-	if s.currentElement >= len(s.tempSettings) {
-		s.elements[s.currentElement-len(s.tempSettings)].Update(state)
-	} else {
-		s.tempSettings[s.currentElement].Update(state)
+	for _, setting := range s.tempSettings {
+		setting.Update(state)
 	}
+
+	s.backButton.Update(state)
+	s.saveButton.Update(state, s.tempSettings)
+
+	// Highlight new and unhighlight old
+	s.highlightOption()
 
 	return nil
 }
 
-func (s *GameSettingsScene) Draw(state *GameState, screen *ebiten.Image) {
-	width, height := state.Resolution()
+func (s *GameSettingsScene) Draw(screen *ebiten.Image) {
+	gw, gh := Resolution()
 
-	drawbackground(screen, width, height)
-	drawText(screen, width/10, height/10, "Settings", color.Black)
-
-	elementPos := 0
+	drawbackground(screen, gw, gh)
+	drawText(screen, gw/10, gh/10, "Settings", color.Black)
 
 	// Draw Settings
 	for _, setting := range s.tempSettings {
-		setting.Draw(screen, width*2/5, height/6+elementPos*20, s.currentElement == elementPos)
-
-		elementPos += 1
+		setting.Draw(screen)
 	}
 
-	// Draw other elements element
-	for _, element := range s.elements {
-		element.Draw(screen, width*2/5, height/6+elementPos*20, s.currentElement == elementPos)
-
-		elementPos += 1
-	}
+	s.backButton.Draw(screen)
+	s.saveButton.Draw(screen)
 }
 
-// Load All Interactive things into the elements array
-// Settings are also clickable but they have an extra method so we'll treat them differently
-func (s *GameSettingsScene) initializeElements(state *GameState) {
-	// Load Interactive Save Button
-	s.elements = append(s.elements, &SaveSettings{Content: "Save", tempSettings: s.tempSettings})
-	// Load Interactive Back Button
-	s.elements = append(s.elements, &BackButton{Content: "Back", previous: state.sceneManager.previous})
-}
-
-// SaveSetting -- Button with pointer to temp settings
-type SaveSettings struct {
-	Content      string
-	tempSettings []*Setting
-}
-
-func (s *SaveSettings) Text() string {
-	return s.Content
-}
-
-// Save the temp Settings
-func (s *SaveSettings) Update(state *GameState) {
-
-	// Save the Settings
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		state.Settings = copySettings(s.tempSettings)
-
-		if len(state.Settings) <= 0 {
-			return
+// Highlight the currently selected Option
+func (s *GameSettingsScene) highlightOption() {
+	// Highlight of settings
+	for i, setting := range s.tempSettings {
+		if s.previousElement == i {
+			setting.Highlight(false)
+		} else if s.currentElement == i {
+			setting.Highlight(true)
 		}
+	}
 
-		// Reload based on the new Settings
-		ebiten.SetFullscreen(state.Settings[0].Selected != 0)
-		ebiten.SetScreenSize(state.Resolution())
+	// Highlight of backbutton
+	if s.currentElement == len(s.tempSettings) {
+		s.backButton.Highlight(true)
+	} else if s.previousElement == len(s.tempSettings) {
+		s.backButton.Highlight(false)
+	}
 
-		// TODO: Write settings to fs
+	// Highlight of saveButton
+	if s.currentElement == len(s.tempSettings)+1 {
+		s.saveButton.Highlight(true)
+	} else if s.previousElement == len(s.tempSettings)+1 {
+		s.saveButton.Highlight(false)
 	}
 }
 
-func (s *SaveSettings) Draw(screen *ebiten.Image, x, y int, isSelected bool) {
-	clr := color.Black
+// Create the temp settings
+func createTempSettings(settings []*Setting) (tempSettings []*Setting) {
 
-	if isSelected {
-		clr = color.White
+	for i, s := range settings {
+		scalefn := initScaleClosure(i)
+		tempSettings = append(
+			tempSettings,
+			&Setting{
+				content:        s.content,
+				selectedOption: s.selectedOption,
+				options:        s.options,
+				scalefn:        scalefn})
 	}
 
-	drawText(screen, x, y, s.Content, clr)
+	return tempSettings
+}
+
+// Settings scale functions need yoffset
+func initScaleClosure(i int) func() (int, int) {
+	yoffset := i
+	// closure. function has access to text even after exiting this block
+	return func() (int, int) {
+		gw, gh := Resolution()
+		return gw * 2 / 5, gh/6 + yoffset*20
+	}
 }
