@@ -26,7 +26,7 @@ func (s *TitleScene) Update(state *GameState) error {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		state.sceneManager.GoTo(&GameSettingsScene{})
+		state.sceneManager.GoTo(&FileSelectScene{})
 		return nil
 	}
 	return nil
